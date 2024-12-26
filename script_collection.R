@@ -1,7 +1,5 @@
-# source("global_util.R")
+# This script processed sampled parameter posteriors into forms that are easy for projection
 source("support.R")
-#source("global_run_gonovax.R")
-#source("global_mcmc_support.R")
 source("script_calibration_support.R")
 source("script_calibration_plot.R")
 set.seed(111)

@@ -1,4 +1,4 @@
-
+# calibration support was adapted from gonovax pacakge uk for singapore setting
 version_check <- function(package, version) {
   if (packageVersion(package) < version) {
     stop(sprintf(
@@ -9,25 +9,16 @@ version_check <- function(package, version) {
   
 }
 
-
+# demograohic info for singapore [adapted from gonovax package]
 demographic_params_sg <- list(    
   # msm
   N0 = 139000,
   enr= 2780,
   male_enr = 19782.5,
-  # male
-  # N0 = 989125,
-  # enr = 19782.5,
-  # N0 = 1353595,#singstats
-  # enr= 25190,  #singstats
-  # N0 = 2500000,#singstats
-  # enr= 50000,  #singstats
-  # q = c(0.52, 0.48), # proportion in group L.  SGGGGGG
-  # p = c(1.14, 13.1), # partner change rate in group L/H SGGGG
+
   q = c(0.85, 0.15), # proportion in group L
   p = c(0.6, 15.6), # partner change rate in group L/H
-  # q = c(0.85, 0.15), # proportion in group L ### my guess
-  # p = c(1, 4), # partner change rate in group L/H #### my guess
+
   exr = 1 / 50
 )
 
@@ -149,100 +140,6 @@ calculate_mcmc_metrics <- function(mcmc_results) {
   ret
 }
 
-
-
-
-# run <- function(tt, gono_params, init_params = NULL, vax_params = NULL,
-#                 n_diag_rec = 1, transform = TRUE) {
-#   
-#   pars <- model_params(gono_params = gono_params,
-#                        init_params = init_params,
-#                        vax_params = vax_params,
-#                        n_diag_rec = n_diag_rec)
-#   mod <- model$new(user = pars, unused_user_action = FALSE)
-#   y <- mod$run(tt)
-#   
-#   if (transform) {
-#     y <- mod$transform_variables(y)
-#   }
-#   
-#   y
-# }
-# 
-# model_params <- function(gono_params = NULL,
-#                          demographic_params = NULL,
-#                          init_params = NULL,
-#                          vax_params = NULL,
-#                          n_diag_rec = 1) {
-#   gono_params <- gono_params %||% gono_params(1)[[1]]
-#   
-#   # demographic_params <- demographic_params %||% demographic_params()
-#   # 重大更新
-#   # demographic_params <- list(
-#   #           # msm 
-#   #           N0 = 101470, 
-#   #           enr = 1888,  
-#   #           # male
-#   #           # N0 = 1353595,#singstats
-#   #           # enr= 25190,  #singstats 
-#   #           q = c(0.85, 0.15), # proportion in group L
-#   #           p = c(0.6, 15.6), # partner change rate in group L/H
-#   # 
-#   #           exr = 1 / 50
-#   #      )
-#   ret <- c(demographic_params, gono_params)
-#   
-#   if (is.null(vax_params)) {
-#     #also add in diag_rec if vax_params not supplied
-#     vax_params <- vax_params0(n_diag_rec = n_diag_rec)
-#     n_vax <- vax_params$n_vax 
-#     #n_vax <- vax_params[[1]] #eliott
-#     if (n_diag_rec == 1) {
-#       i_diag <-  NULL
-#     } else {
-#       i_diag <- seq_len(n_vax)[seq_len(n_vax) %% n_diag_rec != 0]
-#     }
-#     
-#     vax_params$diag_rec <- create_vax_map(n_vax, c(1, 1), i_diag,
-#                                           seq_len(n_vax)[seq_len(n_vax)
-#                                                          %% n_diag_rec != 1])
-#     
-#   }
-#   
-#   #vax_params <- vax_params %||% vax_params0()
-#   
-#   cov <- c(1, rep(0, vax_params$n_vax - 1))
-#   init_params <- init_params %||% initial_params(ret, vax_params$n_vax, cov)
-#   # cov <- c(1, rep(0, vax_params[[1]] - 1)) #eliott
-#   # init_params <- init_params %||% initial_params(ret, vax_params[[1]], cov) #eliott
-#   c(ret, init_params, vax_params)
-# }
-
-# demographic_params <- function() {
-#   
-#   list(N0 = 139000,
-#        q = c(0.85, 0.15), # proportion in group L
-#        p = c(0.6, 15.6), # partner change rate in group L/H
-#        enr = 1250,
-#        exr = 1 / 50
-#   )
-# }
-
-
-
-# demographic_params_sg <- function() {
-#  
-# list(     # msm
-#           N0 = 101470,
-#           enr = 1888,
-#           # male
-#           # N0 = 1353595,#singstats
-#           # enr= 25190,  #singstats
-#           q = c(0.85, 0.15), # proportion in group L
-#           p = c(0.6, 15.6), # partner change rate in group L/H
-#           exr = 1 / 50
-#      )
-# }
 
 create_vax_map <- function(n_vax, v, i_u, i_v) {
   
@@ -401,16 +298,11 @@ transform_eliott <- function(pars, fix_par_t = TRUE) {
 
   t_fix <- ifelse(fix_par_t, t1, t0 + t_max)
   pars$tt <- gonovax_year_eliott(pmin(seq(t0, t0 + t_max), t_fix))
-  #pars$beta_t <- seq(pars$beta_2004, pars$beta_2018, length.out = t_max)
-  #pars$beta_t <- pars$beta_2004 * (1+ (((pars$beta_2018 - pars$beta_2004)/(t1-t0)) * pars$tt))
-###########################################################
+
   pars$beta_t <-  ( ((pars$beta_2018 - pars$beta_2004)/(t1-t0)) * pars$tt) + pars$beta_2004
   pars$eta_l_t <- pars$eta_h * pars$omega * (1 + 0 * pars$tt)
   pars$eta_h_t <- pars$eta_h * (1 + 0 * pars$tt)
-###########################################################
-  # pars$beta_t <- pars$beta_2004 * (1 + pars$beta_2018 * pars$tt)
-  # pars$eta_l_t <- pars$eta_h * pars$omega * (1 + pars$phi_eta * pars$tt)
-  # pars$eta_h_t <- pars$eta_h * (1 + pars$phi_eta * pars$tt)
+
   pars$tt <- seq(0, t_max)
   pars
 }
@@ -418,7 +310,7 @@ transform_eliott <- function(pars, fix_par_t = TRUE) {
 
 
 
-##' Run a mcmc sampler
+##' Run a mcmc sampler [adapted from gnovax package]
 ##'
 ##' This is a basic Metropolis-Hastings MCMC sampler.  The
 ##' `model` is run with a set of parameters to evaluate the
@@ -535,52 +427,6 @@ mcmc_single_chain <- function(pars, n_steps, compare, progress) {
 }
 
 
-# mcmc_single_chain_my_adaption <- function(pars, n_steps, compare, progress) {
-#   
-#   history_pars <- history_collector(n_steps)
-#   history_probabilities <- history_collector(n_steps)
-#   
-#   curr_pars <- pars$initial()
-#   curr_lprior <- pars$prior(curr_pars) #log?
-#   curr_llik <- compare(curr_pars)
-#   curr_lpost <- curr_lprior + curr_llik
-#   
-#   history_pars$add(curr_pars)
-#   history_probabilities$add(c(curr_lprior, curr_llik, curr_lpost))
-#   
-#   tick <- mcmc_progress(n_steps, progress)
-#   
-#   for (i in seq_len(n_steps)) {
-#     tick()
-# 
-#     while(TRUE){
-#     prop_llik <- NaN  # Initialize prop_llik to NaN
-#     while (is.nan(prop_llik)) {
-#       prop_pars <- pars$propose(curr_pars)
-#       prop_lprior <- pars$prior(prop_pars) # log?
-#       prop_llik <- compare(prop_pars) #log?
-#     }
-#     prop_lpost <- prop_lprior + prop_llik
-#     if (runif(1) <= exp(prop_lpost - curr_lpost)) {
-#       curr_pars <- prop_pars
-#       curr_lprior <- prop_lprior
-#       curr_llik <- prop_llik
-#       curr_lpost <- prop_lpost
-#       history_pars$add(curr_pars)
-#       history_probabilities$add(c(curr_lprior, curr_llik, curr_lpost))
-#       break
-#     }
-#     }
-#   }
-#   pars_matrix <- do.call(rbind, history_pars$get())
-#   probabilities <- do.call(rbind, history_probabilities$get())
-#   colnames(probabilities) <- c("log_prior", "log_likelihood", "log_posterior")
-#   
-#   gonovax_mcmc(pars_matrix, probabilities)
-# }
-# 
-
-
 
 ## Generic history collector, collects anything at all into a list
 ##
@@ -604,39 +450,6 @@ history_collector <- function(n) {
 }
 
 
-# ##' @title Calculate the log likelihood of the data given the parameters
-# ##'
-# ##' @param pars A named vector of parameters
-# ##'
-# ##' @return a single log likelihood
-# compare_basic <- function(pars) {
-#   
-#   ## load data
-#   #data <- gonovax_data()
-#   
-#   # initially only fit to most recent attendance figures
-#   sg_data[sg_data$year < 2018, "attended"] <- NA
-#   
-#   ## run odin model
-#   y <- gonovax::run(tt = c(0, sg_data$gonovax_year),
-#            gono_params =  transform0(pars),
-#            demographic_params = demographic_params_sg,
-#            transform = FALSE)
-#   
-#   ## output total treated and total attended per year from odin model
-#   diagnosed <- diff(y[, "tot_treated"])
-#   # attended <- diff(y[, "tot_attended"])
-#   
-#   ## compare to data
-#   lltreated <- dnorm(sg_data$diagnosed, diagnosed, sqrt(diagnosed), TRUE)
-#   #llattended <- dnorm(data$attended, attended, sqrt(attended), TRUE)
-#   
-#   ## output log likelihood
-#   sum(lltreated, na.rm = TRUE)
-# }
-# 
-
-
 ##' @title Calculate the log likelihood of the data given the parameters
 ##' diagnoses and attendances lhoods are negative binomial
 ##' p_symp lhood is betabinomial
@@ -649,16 +462,14 @@ history_collector <- function(n) {
 
 compare_eliott <- function(pars, a) {
   
-  ## load data
-  #data <- sg_data
   
-  ## run odin model
+  # run odin model
   y <- gonovax::run(tt = c(0, sg_data$gonovax_year), 
                     gono_params = transform_eliott(pars), 
                     demographic_params = demographic_params_sg,
                     transform = FALSE)
   
-  ## output total treated and total attended per year from odin model
+  # output total treated and total attended per year from odin model
   diagnosed <- diff(y[, "tot_treated"])
   
   # ## check if diagnosed [1:16] values are all positive

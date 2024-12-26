@@ -1,3 +1,4 @@
+# This script produces figure 4 (boxplots: senstivity analysis)
 library(dplyr)
 library(ggplot2)
 library(ggpubr)

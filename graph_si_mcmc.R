@@ -1,3 +1,4 @@
+# This script produces figure S2 (mcmc convergency check)
 library(ggplot2)
 library(dplyr)
 library(readr)

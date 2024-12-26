@@ -1,6 +1,7 @@
+# this script runs through the calibration procedure of incidence over years to gonorrhoea transmission model in singapore setting.
 library('ggplot2')
 library('dplyr')
-source("script_calibration_plot.R")
+source("script_calibration_plot_support.R")
 source("script_calibration_support.R")
 set.seed(111)
 

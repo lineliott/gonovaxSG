@@ -1,3 +1,5 @@
+# This script produces table S3, S4 (posterior summary)
+
 # Define the order of metrics
 metric_order <- c("beta_2004", "beta_2018", "prev_Asl", "prev_Ash", "epsilon", "eta_h", 
                   "omega", "nu", "sigma", "mu", "psi", "rho", "k_surveillance")

@@ -1,3 +1,4 @@
+# This script produces figure 3 (heatmap: sensitivity analysis)
 library(ggplot2)
 library(ggpubr)
 library(gridExtra)

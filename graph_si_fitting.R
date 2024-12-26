@@ -1,3 +1,4 @@
+# This script produces figure s3 (calibrated model projections compare with original data)
 library(ggplot2)
 source("script_calibration_support.R")
 source("script_calibration_plot.R")

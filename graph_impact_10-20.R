@@ -1,3 +1,4 @@
+# This script produces figure 2 (incidence projection & impact radar graph)
 library(ggplot2)
 library(tidyr)
 library(reshape2)
